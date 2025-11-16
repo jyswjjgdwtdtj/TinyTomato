@@ -1,0 +1,100 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:TinyTomato.ViewModels"
+             xmlns:controls="clr-namespace:Avalonia.Controls;assembly=Avalonia.Controls"
+             xmlns:services="clr-namespace:TinyTomato.Services"
+             xmlns:dialogHostAvalonia="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="700"
+             x:Class="TinyTomato.Views.MainView"
+             x:DataType="vm:MainViewModel"
+             KeyDown="Global_KeyDown">
+  <UserControl.Resources>
+    <vm:IndexToBitmapConverter x:Key="IndexToBitmapConverter" />
+  </UserControl.Resources>
+
+  <Design.DataContext>
+    <vm:MainViewModel />
+  </Design.DataContext>
+<dialogHostAvalonia:DialogHost CloseOnClickAway="False" Identifier="mainDialog">
+  <Grid RowDefinitions="Auto, *" Margin="8">
+    <!-- Top: Buttons -->
+    <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,300" Grid.Row="0">
+      <Grid.Styles>
+        <Style Selector="Button">
+          <Setter Property="Margin" Value="2"></Setter>
+        </Style>
+        <Style Selector="ToggleButton">
+          <Setter Property="Margin" Value="2"></Setter>
+        </Style>
+      </Grid.Styles>
+      <Button Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch" Content="打开图片" Command="{Binding OpenImagesCommand}" Click="OpenImages_Click"/>
+      <Button Grid.Row="0" Grid.Column="1" Content="上一张" Command="{Binding PrevCommand}"/>
+      <Button Grid.Row="1" Grid.Column="1" Content="下一张" Command="{Binding NextCommand}"/>
+
+      <!-- New buttons for encrypt/decrypt -->
+      <Button Grid.Row="0" Grid.Column="2" Content="解混淆当前图片" Command="{Binding DecryptCurrentCommand}" />
+      <Button Grid.Row="1" Grid.Column="2" Content="解混淆所有图片" Command="{Binding DecryptAllCommand}" />
+      <Button Grid.Row="0" Grid.Column="3" Content="混淆当前图片" Command="{Binding EncryptCurrentCommand}" />
+      <Button Grid.Row="1" Grid.Column="3" Content="混淆所有图片" Command="{Binding EncryptAllCommand}" />
+      <Button Grid.Row="0" Grid.Column="4" Content="清除当前图片" Command="{Binding ClearCurrentCommand}" />
+      <Button Grid.Row="1" Grid.Column="4" Content="清除所有图片" Command="{Binding ClearAllCommand}" />
+      <Button Grid.Row="0" Grid.Column="5" Content="还原当前图片" Command="{Binding BackCurrentCommand}" />
+      <Button Grid.Row="1" Grid.Column="5" Content="还原所有图片" Command="{Binding BackAllCommand}" />
+      <Button Grid.Row="0" Grid.Column="6" Content="⚠删除原图片" Click="DelectSource_Clicked" />
+      <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="7" Orientation="Horizontal">
+        <Button Content="保存当前图片"  Click="Save_Clicked"/>
+        <Button Content="保存所有图片"  Click="SaveAll_Clicked"/>
+        <ToggleButton Content="保存后清除" IsChecked="{CompiledBinding SaveAndClean}"/>
+        <ToggleButton Content="直接保存到文件夹" IsChecked="{CompiledBinding DirectlySave}"/>
+        <Button Click="DefaultPath_Tapped">
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="默认文件夹："></TextBlock>
+            <TextBlock Text="{CompiledBinding DefualtSaveFolderPath}" ></TextBlock>
+          </StackPanel>
+        </Button>
+      </StackPanel>
+    </Grid>
+
+    <!-- Bottom: Image viewer with virtualized thumbnails on the left and large image on the right -->
+    <Grid Grid.Row="1" ColumnDefinitions="200,5, *" Margin="0,8,0,0">
+      <!-- Virtualized list of thumbnails -->
+      <ScrollViewer Grid.Column="0" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" DataContext="{x:Static services:ImageCache.Instance}" BorderBrush="Black" BorderThickness="1">
+        <ItemsControl ItemsSource="{Binding CacheList}" x:DataType="services:ImageCache">
+          <ItemsControl.Styles>
+            <Style Selector="ItemsControl:empty">
+              <Setter Property="Template">
+                <ControlTemplate>
+                  <Button HorizontalAlignment="Center" Click="OpenImages_Click">打开图片</Button>
+                </ControlTemplate>
+              </Setter>
+            </Style>
+          </ItemsControl.Styles>
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <VirtualizingStackPanel Orientation="Vertical"></VirtualizingStackPanel>
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <Border Padding="2" Margin="2" BorderBrush="Gray" BorderThickness="1">
+                <Image Source="{CompiledBinding Image}" Height="180" Stretch="Uniform" x:DataType="services:CacheItem" Tapped="Image_Tapped"/>
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
+        <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Background="Gray" ResizeDirection="Columns"/>
+      <Panel Grid.Column="2" DataContext="{CompiledBinding ImageCache}">
+        <Border ZIndex="10" Name="ConsoleBorder" IsVisible="{CompiledBinding #ConsoleTarget.Text,Converter={x:Static StringConverters.IsNotNullOrEmpty}}" Background="WhiteSmoke" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Top" CornerRadius="7">
+          <TextBlock Name="ConsoleTarget" Margin="10" ></TextBlock>
+        </Border>
+        <Border ZIndex="0"  BorderBrush="Gray" BorderThickness="1" Padding="8" DataContext="{CompiledBinding CurrentItem}">
+          <Image Source="{CompiledBinding Image}" Stretch="Uniform"/>
+        </Border>
+      </Panel>
+    </Grid>
+  </Grid>
+</dialogHostAvalonia:DialogHost>
+</UserControl>

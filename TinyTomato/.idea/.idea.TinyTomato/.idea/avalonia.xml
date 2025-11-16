@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AvaloniaProject">
+    <option name="projectPerEditor">
+      <map>
+        <entry key="TinyTomato/App.axaml" value="TinyTomato/TinyTomato.csproj" />
+        <entry key="TinyTomato/MainWindow.axaml" value="TinyTomato/TinyTomato.csproj" />
+        <entry key="TinyTomato/Views/MainView.axaml" value="TinyTomato/TinyTomato.csproj" />
+        <entry key="TinyTomato/Views/MainWindow.axaml" value="TinyTomato/TinyTomato.csproj" />
+      </map>
+    </option>
+  </component>
+</project>

@@ -1,0 +1,16 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="TinyTomato.App"
+             xmlns:vm="clr-namespace:TinyTomato.ViewModels"
+             xmlns:services="clr-namespace:TinyTomato.Services"
+             xmlns:dialogHostAvalonia="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
+             RequestedThemeVariant="Default">
+             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+    <Application.Resources>
+        <vm:IndexToBitmapConverter x:Key="IndexToBitmapConverter" />
+    </Application.Resources>
+    <Application.Styles>
+        <FluentTheme />
+        <dialogHostAvalonia:DialogHostStyles></dialogHostAvalonia:DialogHostStyles>
+    </Application.Styles>
+</Application>
